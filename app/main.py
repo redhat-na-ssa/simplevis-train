@@ -1,10 +1,20 @@
+import random
 import os
 import shutil
 from pathlib import Path
+# from yolov5.train import run as yolov5_train
 
-IMAGE_BASE = Path("/Users/davidwhite/workspace/pshare/images")
-LABEL_BASE = Path("/Users/davidwhite/workspace/pshare/labels")
-TRAIN_BASE = Path("/Users/davidwhite/workspace/pshare/train_data")
+
+TRAINING_DATA = Path(
+    os.environ.get(
+        'TRAINING_DATA',
+        Path(__file__).parent.resolve()
+    )
+)
+
+IMAGE_BASE = TRAINING_DATA.joinpath("images")
+LABEL_BASE = TRAINING_DATA.joinpath("labels")
+TRAIN_BASE = TRAINING_DATA.joinpath("train_data")
 VAL_IMAGE_DIR = TRAIN_BASE.joinpath("images/val")
 TRAIN_IMAGE_DIR = TRAIN_BASE.joinpath("images/train")
 TEST_IMAGE_DIR = TRAIN_BASE.joinpath("images/test")
@@ -30,42 +40,29 @@ all_labels = []
 for i in LABEL_BASE.iterdir():
     all_labels.append(i)
 
+val_test_list = random.choices(all_labels, k=num_val+num_test)
+
 for x in range(0,num_val):
-    ifile = os.path.basename(all_labels[x])
+    ifile = os.path.basename(val_test_list[x])
     my_ext = os.path.splitext(ifile)[0]
     shutil.copy(all_labels[x], VAL_LABEL_DIR.joinpath(ifile)) #Label
     shutil.copy(IMAGE_BASE.joinpath(my_ext + ".jpg"), VAL_IMAGE_DIR.joinpath(my_ext + ".jpg")) #Image
     print("val: " + str(x) + ": " + my_ext)
 for x in range(num_val,num_test + num_val):
-    ifile = os.path.basename(all_labels[x])
+    ifile = os.path.basename(val_test_list[x])
     my_ext = os.path.splitext(ifile)[0]
     shutil.copy(all_labels[x], TEST_LABEL_DIR.joinpath(ifile)) #Label
     shutil.copy(IMAGE_BASE.joinpath(my_ext + ".jpg"), TEST_IMAGE_DIR.joinpath(my_ext + ".jpg")) #Image
     print("test: " + str(x) + ": " + my_ext)
-for x in range(num_val + num_test,num_train):
-    ifile = os.path.basename(all_labels[x])
-    my_ext = os.path.splitext(ifile)[0]
-    shutil.copy(all_labels[x], TRAIN_LABEL_DIR.joinpath(ifile)) #Label
-    shutil.copy(IMAGE_BASE.joinpath(my_ext + ".jpg"), TRAIN_IMAGE_DIR.joinpath(my_ext + ".jpg")) #Image
-    print("train: " + str(x) + ": " + my_ext)
+count_train = 0
+for x in all_labels:
+    if x not in val_test_list:
+        ifile = os.path.basename(x)
+        my_ext = os.path.splitext(ifile)[0]
+        shutil.copy(x, TRAIN_LABEL_DIR.joinpath(ifile)) #Label
+        shutil.copy(IMAGE_BASE.joinpath(my_ext + ".jpg"), TRAIN_IMAGE_DIR.joinpath(my_ext + ".jpg")) #Image
+        print("train: " + str(count_train) + ": " + my_ext)
+        count_train += 1
 
-# for l in all_labels:
-#     ifile = os.path.basename(l)
-#     my_ext = os.path.splitext(ifile)[0]
-#     idx = all_labels.index(l)
-#     if idx < num_val:
-#         print("val: " + str(idx) + ": " + my_ext)    
-#     if idx >= num_val <= 74:
-#         print("test: " + str(idx) + ": " + my_ext)    
-
-    # shutil.copy(i, VAL_LABEL_DIR.joinpath(ifile))
-    # shutil.copy(IMAGE_BASE.joinpath(my_ext + ".jpg"), VAL_IMAGE_DIR.joinpath(my_ext + ".jpg"))
-
-# for i in LABEL_BASE.iterdir():
-#     if test_pics <= num_test:
-#         ifile = os.path.basename(i)
-#         my_ext = os.path.splitext(ifile)[0]
-#         # shutil.copy(i, VAL_LABEL_DIR.joinpath(ifile))
-#         # shutil.copy(IMAGE_BASE.joinpath(my_ext + ".jpg"), VAL_IMAGE_DIR.joinpath(my_ext + ".jpg"))
-#         print(str(test_pics) + ": " + my_ext)
-#         test_pics += 1
+# to start training
+# python train.py --data coco_bx.yaml --weights yolov5s.pt --img 640 --epochs 100
