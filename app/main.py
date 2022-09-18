@@ -2,7 +2,7 @@ import random
 import os
 import shutil
 from pathlib import Path
-# from yolov5.train import run as yolov5_train
+from yolov5.train import run as yolov5_train
 
 
 TRAINING_DATA = Path(
@@ -21,6 +21,17 @@ TEST_IMAGE_DIR = TRAIN_BASE.joinpath("images/test")
 VAL_LABEL_DIR = TRAIN_BASE.joinpath("labels/val")
 TRAIN_LABEL_DIR = TRAIN_BASE.joinpath("labels/train")
 TEST_LABEL_DIR = TRAIN_BASE.joinpath("labels/test")
+
+YOLO_DIR = Path(
+    os.environ.get(
+        'YOLOv5_DIR',
+        Path('/usr/local/lib/python3.9/site-packages/yolov5')
+    )
+)
+WEIGHTS_FILE = YOLO_DIR.joinpath('weights.pt')
+MODEL_FILE = os.environ.get('MODEL_CLASSES')
+BATCH_SIZE = os.environ.get('BATCH_SIZE')
+EPOCHS = os.environ.get('EPOCHS')
 
 count = 0
 # Iterate directory
@@ -66,4 +77,14 @@ for x in all_labels:
 
 print("complete")
 # to start training
-# python train.py --data coco_bx.yaml --weights yolov5s.pt --img 640 --epochs 100
+train_args = {
+    'weights': WEIGHTS_FILE,
+    'data': MODEL_FILE,
+    'batch-size': BATCH_SIZE,
+    'epochs': EPOCHS,
+}
+
+# # Actually run the training
+# yolov5_train(**train_args)
+# cd /usr/local/lib/python3.9/site-packages/yolov5
+# python3 train.py --data coco_uavs.yml --batch-size 2 --weights weights.pt --img 640 --epochs 1

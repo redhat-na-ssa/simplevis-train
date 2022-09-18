@@ -1,8 +1,18 @@
+# FROM ubi9:latest
 FROM quay.io/centos/centos:stream9
 
 WORKDIR /opt/app-root/src
-ARG YOLOv5_VERSION=6.2
-ARG WEIGHTS=yolov5s
+ENV TRAINING_NAME=uavs
+ENV TRAINING_VER=1.0
+ENV DATASET=dataset_uavs.tgz
+ENV MODEL_CLASSES=coco_uavs.yml
+ENV YOLOv5_VERSION=6.2
+ENV WEIGHTS=weights.pt
+ENV BATCH_SIZE=2
+ENV EPOCHS=1
+ENV ARTI_REPO=http://nexus.davenet.local:8081/repository/simplevis/model
+ENV ARTI_USER=simplevis
+ENV ARTI_PWD=simplevis123
 
 RUN dnf install -y git wget libGL python3-pip \
  && dnf clean all
@@ -13,7 +23,7 @@ RUN mkdir -p /usr/local/lib/python3.9/site-packages \
  && pip install --no-cache-dir \
     -r /usr/local/lib/python3.9/site-packages/yolov5/requirements.txt
 
-ENV TRAINING_DATA=/opt/app-root/src/training
+ENV TRAINING_DATA=/usr/local/lib/python3.9/site-packages/yolov5/training
 
 COPY requirements.txt /opt/app-root/src/
 
@@ -30,12 +40,14 @@ RUN cd /opt/app-root/src \
 COPY app/ /opt/app-root/src/
 
 RUN cd /usr/local/lib/python3.9/site-packages/yolov5 \
- && wget -O data/coco_bx.yaml http://nexus.davenet.local:8081/repository/simplevis/model/coco_bx.yaml \
- && wget -O ${TRAINING_DATA}/dataset.tgz http://nexus.davenet.local:8081/repository/simplevis/data/training/dataset_bx.tgz \
+ && wget -O ${TRAINING_DATA}/dataset.tgz http://nexus.davenet.local:8081/repository/simplevis/data/training/${DATASET} \
  && cd ${TRAINING_DATA} \
- && tar xzf dataset.tgz
+ && tar xzf dataset.tgz \
+ && cd /usr/local/lib/python3.9/site-packages/yolov5 \
+ && cp ${TRAINING_DATA}/model/${MODEL_CLASSES} data/${MODEL_CLASSES} \
+ && cp ${TRAINING_DATA}/model/${WEIGHTS} ${WEIGHTS}
 
 USER 1001
 # EXPOSE 8000
-# ENTRYPOINT ["/usr/local/bin/uvicorn"]
+ENTRYPOINT ["/opt/app-root/src/trainit.sh"]
 # CMD ["main:app", "--host", "0.0.0.0"]
