@@ -1,0 +1,50 @@
+---
+kind: Job
+apiVersion: apps/v1
+metadata:
+  name: training-job
+spec:
+  template:
+    spec:
+      containers:
+        - name: training
+          image: simplevis-train nexus.davenet.local:8080/simplevis/train:latest
+          volumeMounts:
+            - mountPath: /usr/local/lib/python3.9/site-packages/yolov5/training
+              name: training-data
+          resources: {}
+          env:
+            - name: TRAINING_NAME
+              value: "uavs"
+            - name: TRAINING_VER
+              value: "1.0"
+            - name: DATASET
+              value: "dataset_uavs.tgz"
+            - name: MODEL_CLASSES
+              value: "coco_uavs.yml"
+            - name: YOLOv5_VERSION
+              value: "6.2"
+            - name: WEIGHTS
+              value: "weights.pt"
+            - name: BATCH_SIZE
+              value: "2"
+            - name: EPOCHS
+              value: "1"
+            - name: ARTI_REPO
+              value: "http://nexus.davenet.local:8081/repository/simplevis/model"
+            - name: ARTI_USER
+              value: "simplevis"
+            - name: ARTI_PWD
+              value: "simplevis123"
+            - name: TRAINING_DATA
+              value: "/usr/local/lib/python3.9/site-packages/yolov5/training"
+        restartPolicy: Never
+      backoffLimit: 4
+      volumes:
+        - name: training-data
+          persistentVolumeClaim:
+            claimName: pvc-training
+      terminationGracePeriodSeconds: 30
+      dnsPolicy: ClusterFirst
+      securityContext: {}
+      schedulerName: default-scheduler
