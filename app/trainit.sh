@@ -18,10 +18,18 @@ cd /usr/local/lib/python3.9/site-packages/yolov5
 
 python3 train.py --data $MODEL_CLASSES \
 --batch-size $BATCH_SIZE \
---weights $WEIGHTS \
+--weights weights.pt \
 --project ${TRAINING_DATA} \
 --img 640 \
 --epochs $EPOCHS
+
+cd ${TRAINING_DATA}
+
+tar czf artifacts.tgz exp
+
+curl -v -u $ARTI_USER:$ARTI_PWD \
+--upload-file ${TRAINING_DATA}/artifacts.tgz \
+$ARTI_REPO/$TRAINING_NAME/$TRAINING_VER/artifacts.tgz
 
 curl -v -u $ARTI_USER:$ARTI_PWD \
 --upload-file ${TRAINING_DATA}/exp/weights/best.pt \
