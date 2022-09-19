@@ -7,7 +7,7 @@ ENV TRAINING_VER=1.0
 ENV DATASET=dataset_uavs.tgz
 ENV MODEL_CLASSES=coco_uavs.yml
 ENV YOLOv5_VERSION=6.2
-ENV WEIGHTS=weights.pt
+ENV WEIGHTS=yolov5s.pt
 ENV BATCH_SIZE=2
 ENV EPOCHS=1
 ENV ARTI_REPO=http://nexus.davenet.local:8081/repository/simplevis/model
@@ -27,11 +27,12 @@ ENV TRAINING_DATA=/usr/local/lib/python3.9/site-packages/yolov5/training
 
 COPY requirements.txt /opt/app-root/src/
 
-RUN cd /opt/app-root/src \
+RUN wget -O /usr/local/lib/python3.9/site-packages/yolov5/data/${MODEL_CLASSES} ${ARTI_REPO}/${MODEL_CLASSES} \
+ && wget -O /usr/local/lib/python3.9/site-packages/yolov5/${WEIGHTS} ${ARTI_REPO}/${WEIGHTS} \
+ && cd /opt/app-root/src \
  && pip install --no-cache-dir -r requirements.txt \
  && mkdir -p ${TRAINING_DATA} \
- && chown -R 1001:1001 ${TRAINING_DATA} \
- && chown -R 1001:1001 /usr/local/lib/python3.9/site-packages/yolov5
+ && chown -R 1001:1001 ${TRAINING_DATA} 
 
 COPY app/ /opt/app-root/src/
 

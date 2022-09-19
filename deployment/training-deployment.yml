@@ -13,8 +13,8 @@ spec:
       containers:
         - name: training
           image: nexus.davenet.local:8080/simplevis/train:latest
-          # command: [ "/bin/bash", "-c", "--" ]
-          # args: [ "while true; do sleep 30; done;" ]          
+          command: [ "/bin/bash", "-c", "--" ]
+          args: [ "while true; do sleep 30; done;" ]          
           volumeMounts:
             - mountPath: /usr/local/lib/python3.9/site-packages/yolov5/training
               name: training-data

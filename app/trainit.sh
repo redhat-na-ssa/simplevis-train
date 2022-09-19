@@ -7,13 +7,9 @@ mkdir -p ${TRAINING_DATA}/train_data/images/test \
  && mkdir -p ${TRAINING_DATA}/train_data/labels/train \
  && mkdir -p ${TRAINING_DATA}/train_data/labels/val
  
-cd /usr/local/lib/python3.9/site-packages/yolov5 \
- && wget -O ${TRAINING_DATA}/dataset.tgz http://nexus.davenet.local:8081/repository/simplevis/data/training/${DATASET} \
+wget -O ${TRAINING_DATA}/dataset.tgz http://nexus.davenet.local:8081/repository/simplevis/data/training/${DATASET} \
  && cd ${TRAINING_DATA} \
- && tar xzf dataset.tgz \
- && cd /usr/local/lib/python3.9/site-packages/yolov5 \
- && cp ${TRAINING_DATA}/model/${MODEL_CLASSES} data/${MODEL_CLASSES} \
- && cp ${TRAINING_DATA}/model/${WEIGHTS} ${WEIGHTS}
+ && tar xzf dataset.tgz
 
 cd /opt/app-root/src
 python3 main.py
