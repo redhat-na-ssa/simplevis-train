@@ -82,6 +82,8 @@ train_args = {
     'data': MODEL_FILE,
     'batch-size': BATCH_SIZE,
     'epochs': EPOCHS,
+    'project': TRAINING_DATA,
+    'exist_ok': True,
 }
 
 # # Actually run the training

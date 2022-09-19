@@ -10,4 +10,4 @@
       resources:
         requests:
           storage: 8Gi
-      storageClassName: thin    
+      storageClassName: thin

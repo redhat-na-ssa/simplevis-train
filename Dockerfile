@@ -35,7 +35,9 @@ RUN cd /opt/app-root/src \
  && mkdir -p ${TRAINING_DATA}/train_data/labels/test \
  && mkdir -p ${TRAINING_DATA}/train_data/labels/train \
  && mkdir -p ${TRAINING_DATA}/train_data/labels/val \
- && chown -R 1001:1001 ${TRAINING_DATA}
+ && chown -R 1001:1001 ${TRAINING_DATA} \
+ && mkdir /usr/local/lib/python3.9/site-packages/yolov5/runs
+ && chown -R 1001:1001 /usr/local/lib/python3.9/site-packages/yolov5/runs
 
 COPY app/ /opt/app-root/src/
 
