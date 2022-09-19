@@ -29,25 +29,19 @@ COPY requirements.txt /opt/app-root/src/
 
 RUN cd /opt/app-root/src \
  && pip install --no-cache-dir -r requirements.txt \
- && mkdir -p ${TRAINING_DATA}/train_data/images/test \
- && mkdir -p ${TRAINING_DATA}/train_data/images/train \
- && mkdir -p ${TRAINING_DATA}/train_data/images/val \
- && mkdir -p ${TRAINING_DATA}/train_data/labels/test \
- && mkdir -p ${TRAINING_DATA}/train_data/labels/train \
- && mkdir -p ${TRAINING_DATA}/train_data/labels/val \
+ && mkdir -p ${TRAINING_DATA} \
  && chown -R 1001:1001 ${TRAINING_DATA} \
- && mkdir /usr/local/lib/python3.9/site-packages/yolov5/runs
- && chown -R 1001:1001 /usr/local/lib/python3.9/site-packages/yolov5/runs
+ && chown -R 1001:1001 /usr/local/lib/python3.9/site-packages/yolov5
 
 COPY app/ /opt/app-root/src/
 
-RUN cd /usr/local/lib/python3.9/site-packages/yolov5 \
- && wget -O ${TRAINING_DATA}/dataset.tgz http://nexus.davenet.local:8081/repository/simplevis/data/training/${DATASET} \
- && cd ${TRAINING_DATA} \
- && tar xzf dataset.tgz \
- && cd /usr/local/lib/python3.9/site-packages/yolov5 \
- && cp ${TRAINING_DATA}/model/${MODEL_CLASSES} data/${MODEL_CLASSES} \
- && cp ${TRAINING_DATA}/model/${WEIGHTS} ${WEIGHTS}
+# RUN cd /usr/local/lib/python3.9/site-packages/yolov5 \
+#  && wget -O ${TRAINING_DATA}/dataset.tgz http://nexus.davenet.local:8081/repository/simplevis/data/training/${DATASET} \
+#  && cd ${TRAINING_DATA} \
+#  && tar xzf dataset.tgz \
+#  && cd /usr/local/lib/python3.9/site-packages/yolov5 \
+#  && cp ${TRAINING_DATA}/model/${MODEL_CLASSES} data/${MODEL_CLASSES} \
+#  && cp ${TRAINING_DATA}/model/${WEIGHTS} ${WEIGHTS}
 
 USER 1001
 # EXPOSE 8000
