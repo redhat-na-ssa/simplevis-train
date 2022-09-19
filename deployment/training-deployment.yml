@@ -42,8 +42,7 @@ spec:
       backoffLimit: 4
       volumes:
         - name: training-data
-          persistentVolumeClaim:
-            claimName: pvc-training
+          emptyDir: {}
       terminationGracePeriodSeconds: 30
       dnsPolicy: ClusterFirst
       securityContext: {}
