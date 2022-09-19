@@ -7,3 +7,8 @@ podman run -it \
  --user 0 \
  simplevis-train \
  /bin/bash
+
+ podman run -it \
+ --rm --entrypoint /bin/bash simplevis-train
+
+ python3 train.py --data $MODEL_CLASSES --batch-size 16 --weights yolov5s.pt --img 640 --epochs $EPOCHS --project $TRAINING_DATA

@@ -19,11 +19,12 @@ cd /usr/local/lib/python3.9/site-packages/yolov5
 python3 train.py --data $MODEL_CLASSES \
 --batch-size $BATCH_SIZE \
 --weights $WEIGHTS \
+--project ${TRAINING_DATA} \
 --img 640 \
 --epochs $EPOCHS
 
 curl -v -u $ARTI_USER:$ARTI_PWD \
---upload-file /usr/local/lib/python3.9/site-packages/yolov5/runs/train/exp/weights/best.pt \
+--upload-file ${TRAINING_DATA}/exp/weights/best.pt \
 $ARTI_REPO/$TRAINING_NAME/$TRAINING_VER/$TRAINING_NAME.pt
 
 curl -v -u $ARTI_USER:$ARTI_PWD \
@@ -31,5 +32,5 @@ curl -v -u $ARTI_USER:$ARTI_PWD \
 $ARTI_REPO/$TRAINING_NAME/$TRAINING_VER/$MODEL_CLASSES
 
 curl -v -u $ARTI_USER:$ARTI_PWD \
---upload-file /usr/local/lib/python3.9/site-packages/yolov5/runs/train/exp/results.csv \
+--upload-file ${TRAINING_DATA}/exp/results.csv \
 $ARTI_REPO/$TRAINING_NAME/$TRAINING_VER/results.csv

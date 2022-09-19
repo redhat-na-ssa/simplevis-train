@@ -13,8 +13,8 @@ spec:
       containers:
         - name: training
           image: nexus.davenet.local:8080/simplevis/train:latest
-          command: [ "/bin/bash", "-c", "--" ]
-          args: [ "while true; do sleep 30; done;" ]          
+          # command: [ "/bin/bash", "-c", "--" ]
+          # args: [ "while true; do sleep 30; done;" ]          
           volumeMounts:
             - mountPath: /usr/local/lib/python3.9/site-packages/yolov5/training
               name: training-data
@@ -31,7 +31,7 @@ spec:
             - name: YOLOv5_VERSION
               value: "6.2"
             - name: WEIGHTS
-              value: "weights.pt"
+              value: "yolov5s.pt"
             - name: BATCH_SIZE
               value: "2"
             - name: EPOCHS
@@ -45,7 +45,7 @@ spec:
             - name: TRAINING_DATA
               value: "/usr/local/lib/python3.9/site-packages/yolov5/training"
       restartPolicy: Never
-      backoffLimit: 4
+      backoffLimit: 1
       volumes:
         - name: training-data
           emptyDir: {}
