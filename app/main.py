@@ -64,6 +64,9 @@ for x in range(num_val,num_test + num_val):
     my_ext = os.path.splitext(ifile)[0]
     shutil.copy(all_labels[x], TEST_LABEL_DIR.joinpath(ifile)) #Label
     shutil.copy(IMAGE_BASE.joinpath(my_ext + ".jpg"), TEST_IMAGE_DIR.joinpath(my_ext + ".jpg")) #Image
+
+    shutil.copy(all_labels[x], TRAIN_LABEL_DIR.joinpath(ifile)) #Label
+    shutil.copy(IMAGE_BASE.joinpath(my_ext + ".jpg"), TRAIN_IMAGE_DIR.joinpath(my_ext + ".jpg")) #Image
     # print("test: " + str(x) + ": " + my_ext)
 count_train = 0
 for x in all_labels:
