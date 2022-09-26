@@ -1,46 +1,40 @@
 #!/bin/bash
 
-mkdir -p ${TRAINING_DATA}/train_data/images/test \
- && mkdir -p ${TRAINING_DATA}/train_data/images/train \
- && mkdir -p ${TRAINING_DATA}/train_data/images/val \
- && mkdir -p ${TRAINING_DATA}/train_data/labels/test \
- && mkdir -p ${TRAINING_DATA}/train_data/labels/train \
- && mkdir -p ${TRAINING_DATA}/train_data/labels/val
- 
 wget -O ${TRAINING_DATA}/dataset.tgz ${ARTI_REPO}/data/training/${DATASET_VER}/${DATASET} \
  && cd ${TRAINING_DATA} \
  && tar xzf dataset.tgz \
- && cp model/${MODEL_CLASSES} ${YOLO_DIR}/data/${MODEL_CLASSES} \
+ && cp data.yaml ${YOLO_DIR}/data \
  && wget -O ${YOLO_DIR}/weights.pt ${ARTI_REPO}/model/${WEIGHTS}
 
-cd /opt/app-root/src
-python3 main.py
+# cd /opt/app-root/src
+# python3.9 main.py
 
-cd /usr/local/lib/python3.9/site-packages/yolov5
+cd ${YOLO_DIR}
 
-python3 train.py --data $MODEL_CLASSES \
+python3.9 train.py --data data.yaml \
 --batch-size $BATCH_SIZE \
 --weights weights.pt \
 --project ${TRAINING_DATA} \
 --img 640 \
+--device 0 \
 --epochs $EPOCHS
 
-# cd ${TRAINING_DATA}
+cd ${TRAINING_DATA}
 
-# tar czf artifacts.tgz exp
+tar czf artifacts.tgz exp
 
-# curl -v -u $ARTI_USER:$ARTI_PWD \
-# --upload-file ${TRAINING_DATA}/artifacts.tgz \
-# $ARTI_REPO/$TRAINING_NAME/$TRAINING_VER/artifacts.tgz
+curl -v -u $ARTI_USER:$ARTI_PWD \
+--upload-file ${TRAINING_DATA}/artifacts.tgz \
+$ARTI_REPO/$TRAINING_NAME/$TRAINING_VER/artifacts.tgz
 
-# curl -v -u $ARTI_USER:$ARTI_PWD \
-# --upload-file ${TRAINING_DATA}/exp/weights/best.pt \
-# $ARTI_REPO/$TRAINING_NAME/$TRAINING_VER/$TRAINING_NAME.pt
+curl -v -u $ARTI_USER:$ARTI_PWD \
+--upload-file ${TRAINING_DATA}/exp/weights/best.pt \
+$ARTI_REPO/$TRAINING_NAME/$TRAINING_VER/$TRAINING_NAME.pt
 
-# curl -v -u $ARTI_USER:$ARTI_PWD \
-# --upload-file /usr/local/lib/python3.9/site-packages/yolov5/data/$MODEL_CLASSES \
-# $ARTI_REPO/$TRAINING_NAME/$TRAINING_VER/$MODEL_CLASSES
+curl -v -u $ARTI_USER:$ARTI_PWD \
+--upload-file /usr/local/lib/python3.9/site-packages/yolov5/data/$MODEL_CLASSES \
+$ARTI_REPO/$TRAINING_NAME/$TRAINING_VER/$MODEL_CLASSES
 
-# curl -v -u $ARTI_USER:$ARTI_PWD \
-# --upload-file ${TRAINING_DATA}/exp/results.csv \
-# $ARTI_REPO/$TRAINING_NAME/$TRAINING_VER/results.csv
+curl -v -u $ARTI_USER:$ARTI_PWD \
+--upload-file ${TRAINING_DATA}/exp/results.csv \
+$ARTI_REPO/$TRAINING_NAME/$TRAINING_VER/results.csv
