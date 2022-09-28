@@ -32,7 +32,7 @@ curl -v -u $ARTI_USER:$ARTI_PWD \
 $ARTI_REPO/$TRAINING_NAME/$TRAINING_VER/$TRAINING_NAME.pt
 
 curl -v -u $ARTI_USER:$ARTI_PWD \
---upload-file /usr/local/lib/python3.9/site-packages/yolov5/data/$MODEL_CLASSES \
+--upload-file /usr/local/lib/python3.9/site-packages/yolov5/data/data.yaml \
 $ARTI_REPO/$TRAINING_NAME/$TRAINING_VER/$MODEL_CLASSES
 
 curl -v -u $ARTI_USER:$ARTI_PWD \
