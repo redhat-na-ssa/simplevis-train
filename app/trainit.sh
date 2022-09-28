@@ -1,26 +1,22 @@
 #!/bin/bash
 
-mkdir -p ${TRAINING_DATA}/train_data/images/test \
- && mkdir -p ${TRAINING_DATA}/train_data/images/train \
- && mkdir -p ${TRAINING_DATA}/train_data/images/val \
- && mkdir -p ${TRAINING_DATA}/train_data/labels/test \
- && mkdir -p ${TRAINING_DATA}/train_data/labels/train \
- && mkdir -p ${TRAINING_DATA}/train_data/labels/val
- 
-wget -O ${TRAINING_DATA}/dataset.tgz http://nexus.davenet.local:8081/repository/simplevis/data/training/${DATASET} \
+wget -O ${TRAINING_DATA}/dataset.tgz ${ARTI_REPO}/data/training/${DATASET_VER}/${DATASET} \
  && cd ${TRAINING_DATA} \
- && tar xzf dataset.tgz
+ && tar xzf dataset.tgz \
+ && cp data.yaml ${YOLO_DIR}/data \
+ && wget -O ${YOLO_DIR}/weights.pt ${ARTI_REPO}/model/${WEIGHTS}
 
-cd /opt/app-root/src
-python3 main.py
+# cd /opt/app-root/src
+# python3.9 main.py
 
-cd /usr/local/lib/python3.9/site-packages/yolov5
+cd ${YOLO_DIR}
 
-python3 train.py --data $MODEL_CLASSES \
+python3.9 train.py --data data.yaml \
 --batch-size $BATCH_SIZE \
 --weights weights.pt \
 --project ${TRAINING_DATA} \
 --img 640 \
+--device 0 \
 --epochs $EPOCHS
 
 cd ${TRAINING_DATA}
@@ -36,7 +32,7 @@ curl -v -u $ARTI_USER:$ARTI_PWD \
 $ARTI_REPO/$TRAINING_NAME/$TRAINING_VER/$TRAINING_NAME.pt
 
 curl -v -u $ARTI_USER:$ARTI_PWD \
---upload-file /usr/local/lib/python3.9/site-packages/yolov5/data/$MODEL_CLASSES \
+--upload-file /usr/local/lib/python3.9/site-packages/yolov5/data/data.yaml \
 $ARTI_REPO/$TRAINING_NAME/$TRAINING_VER/$MODEL_CLASSES
 
 curl -v -u $ARTI_USER:$ARTI_PWD \
